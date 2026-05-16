@@ -1,7 +1,7 @@
-import React, { useState } from "react";
-import MenuBar from "./MenuBar";
-import { useDispatch, useSelector } from "react-redux";
-import { toggleMenu } from "../utils/appSlice";
+import React, { memo } from 'react';
+import MenuBar from './MenuBar';
+import { useDispatch, useSelector } from 'react-redux';
+import { toggleMenu } from '../utils/appSlice';
 
 const SideBar = () => {
   const isMenu = useSelector((store) => store.app.isMenu);
@@ -135,4 +135,4 @@ const SideBar = () => {
   );
 };
 
-export default SideBar;
+export default memo(SideBar);

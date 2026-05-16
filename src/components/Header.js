@@ -1,15 +1,39 @@
-import React, { useRef } from "react";
-import { useDispatch } from "react-redux";
-import { searchText } from "../utils/searchSlice";
+import React, { useRef, memo } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { searchText } from '../utils/searchSlice';
+import { useAuth } from '../hooks/useAuth';
 
 const Header = () => {
   const search = useRef(null);
   const dispatch = useDispatch();
-  const handleClick = () => {
-    dispatch(searchText(search?.current?.value));
+  const navigate = useNavigate();
+  const { currentUser, signOut } = useAuth();
+  const isAuthenticated = useSelector((state) => state.auth?.isAuthenticated);
+
+  const handleSearch = () => {
+    if (search.current?.value) {
+      dispatch(searchText(search.current.value));
+    }
   };
+
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      handleSearch();
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await signOut();
+      navigate('/login');
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
+  };
+
   return (
-    <div className="flex justify-between items-center mt-4">
+    <div className="flex justify-between items-center mt-4 mb-4">
       <div>
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -38,15 +62,42 @@ const Header = () => {
           </g>
         </svg>
       </div>
-      <div className="border-2 rounded-full border-slate-200 px-4 py-2">
-        <input ref={search} className="w-96 text-lg" placeholder="Search" />
+
+      <div className="border-2 rounded-full border-slate-200 px-4 py-2 flex-1 mx-4">
+        <input
+          ref={search}
+          className="w-full text-lg focus:outline-none"
+          placeholder="Search videos..."
+          onKeyPress={handleKeyPress}
+        />
       </div>
-      <button onClick={handleClick}>search</button>
-      <div className="border-2 rounded-full border-slate-200 px-4 py-2 text-sm font-semibold cursor-pointer text-blue-600">
-        Sign In
-      </div>
+
+      <button
+        onClick={handleSearch}
+        className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition mr-4"
+      >
+        Search
+      </button>
+
+      {isAuthenticated && currentUser ? (
+        <div className="flex items-center gap-4">
+          <span className="text-sm text-gray-700">
+            {currentUser.displayName || currentUser.email}
+          </span>
+          <button
+            onClick={handleLogout}
+            className="border-2 rounded-full border-slate-200 px-4 py-2 text-sm font-semibold cursor-pointer text-red-600 hover:bg-red-50 transition"
+          >
+            Logout
+          </button>
+        </div>
+      ) : (
+        <div className="border-2 rounded-full border-slate-200 px-4 py-2 text-sm font-semibold cursor-pointer text-blue-600 hover:bg-blue-50">
+          Sign In
+        </div>
+      )}
     </div>
   );
 };
 
-export default Header;
+export default memo(Header);

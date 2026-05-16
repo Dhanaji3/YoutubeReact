@@ -1,0 +1,20 @@
+{
+  "extends": ["react-app", "react-app/jest"],
+  "rules": {
+    "no-console": [
+      "warn",
+      {
+        "allow": ["warn", "error"]
+      }
+    ],
+    "no-unused-vars": [
+      "warn",
+      {
+        "argsIgnorePattern": "^_"
+      }
+    ],
+    "react/jsx-no-target-blank": "warn",
+    "no-implicit-coercion": "error",
+    "eqeqeq": ["error", "always"]
+  }
+}

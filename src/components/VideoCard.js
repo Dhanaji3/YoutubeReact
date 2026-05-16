@@ -1,22 +1,30 @@
-import React from "react";
+import React, { memo } from 'react';
+import { formatViewCount, truncateText } from '../utils/helpers';
 
 const VideoCard = ({ info }) => {
   const { snippet, statistics } = info;
   const { channelTitle, title, thumbnails } = snippet;
+  const viewCount = statistics?.viewCount || 0;
+
   return (
-    <div className="shadow-lg m-4 w-80">
+    <div className="shadow-lg m-4 w-80 rounded-lg overflow-hidden hover:shadow-xl transition cursor-pointer">
       <img
-        className="rounded-lg"
-        src={thumbnails.high.url}
-        alt="video not found"
+        className="w-full h-48 object-cover"
+        src={thumbnails?.high?.url || 'https://via.placeholder.com/320x180'}
+        alt={title}
+        loading="lazy"
       />
-      <ul>
-        <li className="font-bold py-2">{title}</li>
-        <li>{channelTitle}</li>
-        <li>{statistics.viewCount}</li>
-      </ul>
+      <div className="p-3">
+        <h3 className="font-bold py-2 text-sm line-clamp-2 hover:text-blue-600">
+          {truncateText(title, 60)}
+        </h3>
+        <p className="text-gray-600 text-xs mb-1">{channelTitle}</p>
+        <p className="text-gray-500 text-xs">
+          {formatViewCount(viewCount)} views
+        </p>
+      </div>
     </div>
   );
 };
 
-export default VideoCard;
+export default memo(VideoCard);
